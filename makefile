@@ -1,4 +1,5 @@
-all: test.cpp i s att o ll
+#all: test.cpp i s att o ll
+all: test.cpp
 	$(COMPILER) -std=c++11 -g -o test test.cpp $(LEVEL)
 	time ./test
 

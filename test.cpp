@@ -1,19 +1,29 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <vector>
-#include <time.h> 
-#include <limits.h>
-#include <iostream>
+#include <bits/stdc++.h>
 
 
-int main(){
-    volatile uint64_t a;
-    volatile uint64_t* p=new volatile uint64_t;
-    for(uint64_t i=0;i<10000;++i){
-        a=i;
-        *p=i;
+FILE* fp;
+
+int main()
+{
+    double a,b;
+    fp=fopen("./hanpi.txt","r");
+    if(fp==nullptr)exit(0);
+    fseek(fp,0L,SEEK_END);
+    uint64_t size=ftell(fp);
+    std::cout<<size<<std::endl;
+    rewind(fp);
+
+    while(ftell(fp)<size){
+        std::cout<<ftell(fp)<<std::endl;
+        fscanf(fp,"%lf\t%lf\n",&a,&b);
+        std::cout<<fp<<std::endl;
+        std::cout<<ftell(fp)<<std::endl;
+        std::cout<<a<<" "<<b<<std::endl;
+        std::cout<<" "<<std::endl;
+        
         
     }
-    if(a%100==0)std::cout<<a<<" "<<*p<<std::endl;
+
+    fclose(fp);
     return 0;
 }
