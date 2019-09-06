@@ -88,10 +88,8 @@ int main()
         std::vector<char> tmpVector(tmp.size());
         std::copy(tmp.begin(),tmp.end(),tmpVector.begin());
         sort(tmpVector.begin(),tmpVector.end());
-        for(auto dude:tmpVector){
-            std::cout<<dude<<" "<<std::endl;
-        }
-        break;
+        
+
 
     }
 

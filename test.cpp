@@ -28,11 +28,23 @@ std::vector<std::vector<double> > getResult(const std::vector<double>& inputValu
 }
 
 void Display(const std::vector<std::vector<double>>& result){
-    for(auto dude:result){
-        for(int i=0;i<dude.size();++i){
-            std::cout<<dude[i]<<" ";
+    std::cout<<"Input"<<std::endl;
+    for(int i=0;i<result.size();++i){
+        if(!(i&0x00000001)){
+            for(int j=0;j<result[i].size();++j){
+                std::cout<<result[i][j]<<" ";
+            }
+            std::cout<<std::endl;
         }
-        std::cout<<std::endl;
+    }
+    std::cout<<"Output"<<std::endl;
+    for(int i=0;i<result.size();++i){
+        if(i&0x00000001){
+            for(int j=0;j<result[i].size();++j){
+                std::cout<<result[i][j]<<" ";
+            }
+            std::cout<<std::endl;
+        }
     }
 }
 
