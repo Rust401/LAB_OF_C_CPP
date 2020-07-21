@@ -15,7 +15,7 @@
 // tube
 #define TUBE_QUANTITY 4
 #define TUBE_LENGTH 1 /* m */
-#define TUBE_RADIUS 25/1000 /* 25mm */
+#define TUBE_RADIUS 0.025 /* 25mm */
 #define TUBE_MASS 10 /* kg */
 
 // cylinder
@@ -27,10 +27,11 @@
 #define TOTAL_LENGTH 22.05 /* m */
 #define UNIT_LENGTH 0.105 /* m */
 #define UNIT_MASS 7 /* kg/m */
+#define TOTAL_COUNT (22.05/0.105)
 
 // iron ball (hammer)
 #define HAMMER_MASS 1200 /* kg */
-#define HAMMER_VOLUMN NOT_DEFINE_YET
+#define HAMMER_DENSITY 7800 /* kg/m3 */
 
 
 // nature
@@ -42,9 +43,6 @@
 #define PHI 3.1415926
 
 // constrain
-
-
-
 
 
 

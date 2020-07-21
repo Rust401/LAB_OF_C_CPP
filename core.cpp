@@ -33,6 +33,7 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth)
         currentDude._type="buoy";
         currentDude._thetaOne=thetaOne;
         currentDude._tractionOne=tractionOne;
+        currentDude._length=0;
     }
 
     /* tube */
@@ -63,6 +64,7 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth)
         currentDude._tractionOne=tractionOne;
         currentDude._tractionTwo+tractionTwo;
         currentDude._phi=phi;
+        currentDude._length=TUBE_LENGTH;
     }
 
 
@@ -109,6 +111,7 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth)
         currentDude._tractionTwo+tractionTwo;
 
         currentDude._phi=phi;
+        currentDude._length=CYLINDER_LENGTH;
     }
 
     /* chain */
@@ -139,5 +142,41 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth)
         currentDude._tractionOne=tractionOne;
         currentDude._tractionTwo+tractionTwo;
         currentDude._phi=phi;
+        currentDude._length=UNIT_LENGTH;
     }
+}
+
+
+void OneTry(std::vector<Dude>& dudes, double depth)
+{
+    if(dudes.size()!=0){
+        dudes.clear();
+    }
+
+    uint32_t count=0;
+
+    // 1) dummy dude
+    Dude nullDude;
+    Dude dummyDude;
+    nextDude(nullDude,dummyDude,count,depth);
+    dudes.push_back(dummyDude);
+    ++count;
+
+    // 2) buoy
+    Dude buoyDude;
+    nextDude(dudes.back(),buoyDude,count,depth);
+    dudes.push_back(buoyDude);
+    ++count;
+
+    // 3) tube
+    while(count<=5){
+        Dude currentTube;
+        nextDude(dudes.back(),currentTube,count,depth);
+        dudes.push_back(currentTube);
+        ++count;
+    }
+    
+
+    
+    
 }

@@ -12,6 +12,7 @@ struct Dude
     double _phi;
     double _tractionOne;
     double _tractionTwo;
+    double _length;
     double _gravity;
     double _floatage;
 
@@ -27,10 +28,11 @@ struct Dude
         this->_tractionTwo = 0;
         this->_gravity=0;
         this->_floatage=0;
+        this->_length=0;
     }
     Dude(){
-        this->index=0;
-        this->type="default";
+        this->_index=0;
+        this->_type="default";
         this->_thetaOne = 0;
         this->_thetaTwo = 0;
         this->_phi = 0;
@@ -38,5 +40,6 @@ struct Dude
         this->_tractionTwo = 0;
         this->_gravity=0;
         this->_floatage=0;
+        this->_length=0;
     }
 }
