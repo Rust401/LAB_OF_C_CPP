@@ -43,9 +43,17 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth)
         double gravity=TUBE_MASS*G;
         double floatage=SEA_WATER_DENSITY*G*PHI*pow(TUBE_RADIUS,2)*TUBE_LENGTH;
         double horizontal=tractionOne*cos(thetaOne);
-        double vertical=tractionOne*sin(thetaOne)-(gravity-floatage);
+        double vertical = tractionOne * sin(thetaOne) - (gravity - floatage);
         double thetaTwo=atan(vertical/horizontal);/* it's a radian */
         double tractionTwo=horizontal/cos(thetaTwo);
+        double phi=atan(
+            (
+                2*tractionOne*sin(thetaOne)-(gravity-floatage)
+            )/(
+                2*tractionOne*cos(thetaOne)
+            )
+        );
+        
 
         /* put the value back */
         currentDude._index=index;
@@ -54,31 +62,82 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth)
         currentDude._thetaTwo=thetaTwo;
         currentDude._tractionOne=tractionOne;
         currentDude._tractionTwo+tractionTwo;
-        
-
+        currentDude._phi=phi;
     }
 
 
     /* cylinder */
     if(index==5){
         /* calculate */
+        double thetaOne=preDude._thetaOne;
+        double tractionOne=preDude._tractionOne;
+
+        // 1) ball
+        double gravityBall=HAMMER_MASS*G;
+        double ballVolumn=HAMMER_MASS/HAMMER_DENSITY;
+        double floatageBall=ballVolumn*SEA_WATER_DENSITY*G;
+
+        // 2) cylinder
+        double gravityCyinder=CYLINDER_MASS*G;
+        double cylinderVolumn=pow(CYLINDER_RADIUS,2)*PHI*CYLINDER_LENGTH;
+        double floatageCylinder=SEA_WATER_DENSITY*G*cylinderVolumn;
 
 
+        double horizontal=tractionOne*cos(thetaOne);;
+        double vertical = 
+        tractionOne * sin(thetaOne) - 
+        (gravityCyinder - floatageCylinder) - 
+        (gravityBall-floatageBall);
+
+        double thetaTwo=atan(vertical/horizontal);/* it's a radian */
+        double tractionTwo=horizontal/cos(thetaTwo);
+
+        double phi=atan(
+            (
+                2*tractionOne*sin(thetaOne)-(gravityCyinder-floatageCylinder)
+            )/(
+                2*tractionOne*cos(thetaOne)
+            )
+        );
 
         /* put the value back */
+        currentDude._index=index;
+        currentDude._type="cylinder";
+        currentDude._thetaOne=thetaOne;
+        currentDude._thetaTwo=thetaTwo;
+        currentDude._tractionOne=tractionOne;
+        currentDude._tractionTwo+tractionTwo;
 
-
+        currentDude._phi=phi;
     }
 
     /* chain */
     if(index>5){
         /* calculate */
-
-
+        double thetaOne=preDude._thetaOne;
+        double tractionOne=preDude._tractionOne;
+        double gravity=UNIT_LENGTH*UNIT_MASS*G;
+        double floatage=0;
+        double horizontal=tractionOne*cos(thetaOne);
+        double vertical = tractionOne * sin(thetaOne) - (gravity - floatage);
+        double thetaTwo=atan(vertical/horizontal);/* it's a radian */
+        double tractionTwo=horizontal/cos(thetaTwo);
+        double phi=atan(
+            (
+                2*tractionOne*sin(thetaOne)-(gravity-floatage)
+            )/(
+                2*tractionOne*cos(thetaOne)
+            )
+        );
+        
 
         /* put the value back */
-
-
-
+        currentDude._index=index;
+        currentDude._type="chain";
+        currentDude._thetaOne=thetaOne;
+        currentDude._thetaTwo=thetaTwo;
+        currentDude._tractionOne=tractionOne;
+        currentDude._tractionTwo+tractionTwo;
+        currentDude._phi=phi;
     }
 }
