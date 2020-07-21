@@ -1,6 +1,9 @@
+#ifndef DUDE_H
+#define DUDE_H
+
 #include <string>
 #include <vector>
-#include "float.h"
+#include "para.h"
 
 struct Dude
 {
@@ -42,4 +45,6 @@ struct Dude
         this->_floatage=0;
         this->_length=0;
     }
-}
+};
+
+#endif //DUDE_H

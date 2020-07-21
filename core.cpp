@@ -4,12 +4,18 @@
 #include <string>
 #include <math.h>
 #include <cmath>
+#include <utility>
 #include <algorithm>
 #include <vector>
 #include <limits.h>
 #include "para.h"
 #include "dude.h"
+#include "indicator.h"
 
+
+/* -------------------------------------------------------------------------------- */
+/* ---------------------------- PREVIOUS & NEXT ---------------------------- */
+/* -------------------------------------------------------------------------------- */
 void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth)
 {
     /* the dummy dude, contain no data */
@@ -33,7 +39,8 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth)
         currentDude._type="buoy";
         currentDude._thetaOne=thetaOne;
         currentDude._tractionOne=tractionOne;
-        currentDude._length=0;
+        currentDude._length=depth;
+        currentDude._phi=PHI/2;
     }
 
     /* tube */
@@ -146,6 +153,10 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth)
     }
 }
 
+/* -------------------------------------------------------------------------------- */
+/* ---------------------------- TRY ONE IMMERSION TYEP ---------------------------- */
+/* -------------------------------------------------------------------------------- */
+
 
 void OneTry(std::vector<Dude>& dudes, double depth)
 {
@@ -175,8 +186,79 @@ void OneTry(std::vector<Dude>& dudes, double depth)
         dudes.push_back(currentTube);
         ++count;
     }
+
+    // 4) cylinder
+    Dude cylinderDude;
+    nextDude(dudes.back(),cylinderDude,count,depth);
+    dudes.push_back(cylinderDude);
+    ++count;
     
 
-    
-    
+    // 5) chain
+    while(count<=TOTAL_COUNT){
+        Dude currentChain;
+        nextDude(dudes.back(),currentChain,count,depth);
+        dudes.push_back(currentChain);
+        ++count;
+    }
 }
+
+/* -------------------------------------------------------------------------------- */
+/* ---------------------------- GET THE INDICATORS ---------------------------- */
+/* -------------------------------------------------------------------------------- */
+
+void oneValidation(std::vector<Dude>& dudes, Indicators& indicators){
+    if(dudes.size()==0){
+        return;
+    }
+
+    // Distance from the sea level
+    double currentHeight=0;
+    for(int i=1;i<dudes.size();++i){
+        currentHeight+=dudes[i]._length*sin(dudes[i]._phi);
+    }
+    indicators._height=currentHeight;
+
+    // Distance betweeen buoy and anchor
+    double currentLength=0;
+    for(int i=2;i<dudes.size();++i){
+        currentLength=dudes[i]._length*cos(dudes[i]._phi);
+    }
+    indicators._distance=currentLength;
+
+    // phi of cylinder
+    indicators._phiCylinder=dudes[6]._phi*180/PHI; /* now it's a degree */
+    
+    // phi of last Chain
+    indicators._phiLastChain=dudes.back()._phi*180/PHI;
+
+    // immersion depth
+    indicators._depth=dudes[1]._length;
+}
+
+/* -------------------------------------------------------------------------------- */
+/* ---------------------------- THE SHAPE OF THE CHAIN ---------------------------- */
+/* -------------------------------------------------------------------------------- */
+
+/* Get the data of chain shape */
+std::vector<std::pair<double,double>> getChainShape(std::vector<Dude>& dudes){
+    std::vector<std::pair<double,double>> points;
+    uint32_t i=dudes.size()-1;
+
+    //insert the first point
+    std::pair<double,double> firstPoint=std::make_pair(0.0,0.0);
+    points.push_back(firstPoint);
+
+    //inser the chains from the last chain
+    while(dudes[i]._type=="chain"){
+        double deltaX=dudes[i]._length*cos(dudes[i]._phi);
+        double deltaY=dudes[i]._length*sin(dudes[i]._phi);
+        auto currentPoint=std::make_pair(points.back().first+deltaX,points.back().second+deltaY);
+        points.push_back(currentPoint);
+    }
+    
+    return points;
+}
+
+/* out put the data to a file */
+
