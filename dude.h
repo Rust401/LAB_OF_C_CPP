@@ -45,6 +45,9 @@ struct Dude
         this->_floatage=0;
         this->_length=0;
     }
+    
+    void display();
+
 };
 
 #endif //DUDE_H

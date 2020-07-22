@@ -1,12 +1,12 @@
 #Uncommit the next line to build the intermidiate file
 #all: test.cpp i s att o ll
 
-TARGET=pointerTest.cpp
+TARGET=core.cpp main.cpp indicator.cpp dude.cpp
 LEVEL=-O3
 COMPILER= clang++
 
 all: $(TARGET)
-	$(COMPILER) -std=c++11 -g -o test $(TARGET) $(LEVEL)
+	$(COMPILER) -std=c++11 -o test $(TARGET) $(LEVEL)
 	time ./test
 
 i:$(TARGET)

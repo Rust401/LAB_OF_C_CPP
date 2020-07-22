@@ -24,6 +24,9 @@ struct Indicators
         this-> _depth=0;
         //this-> _hammerMass=0;
     }
+
+    void display();
+    bool validate();
 };
 
 #endif //INDICATOR_H
