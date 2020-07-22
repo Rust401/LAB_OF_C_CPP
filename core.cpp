@@ -45,7 +45,7 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth)
     }
 
     /* tube */
-    if(index<=2&&index<=5){
+    if(index>=2&&index<=5){
         /* calculate */
         double thetaOne=preDude._thetaOne;
         double tractionOne=preDude._tractionOne;
@@ -174,6 +174,7 @@ void OneTry(std::vector<Dude>& dudes, double depth)
     dudes.push_back(dummyDude);
     ++count;
 
+
     // 2) buoy
     Dude buoyDude;
     nextDude(dudes.back(),buoyDude,count,depth);
@@ -281,8 +282,8 @@ void saveTheChainShapeToFile(std::vector<std::pair<double,double> >& points){
     fclose(pFile);
     std::cout<<"File saved to "<<CHAIN_SHAPE_FILE<<std::endl;
     return;
-
-    
 }
+
+
 
 

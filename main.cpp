@@ -10,10 +10,12 @@
 int main()
 {
     std::vector<Dude> dudes;
-    OneTry(dudes,1.0f);
-    dudes[0].display();
+    OneTry(dudes,0.34f);
+    for(int i=0;i<=15;++i){
+        dudes[i].display();
+    }
+
     Indicators indicator;
     oneValidation(dudes,indicator);
-    indicator.display()
-;
+    indicator.display();
 }
