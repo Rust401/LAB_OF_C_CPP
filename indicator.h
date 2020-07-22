@@ -14,7 +14,7 @@ struct Indicators
     double _height;
     double _distance;
     double _depth;
-    double _hammerMass;
+    //double _hammerMass;
 
     Indicators(){
         this-> _phiCylinder=0;
@@ -22,7 +22,7 @@ struct Indicators
         this-> _height=0;
         this-> _distance=0;
         this-> _depth=0;
-        this-> _hammerMass=0;
+        //this-> _hammerMass=0;
     }
 };
 

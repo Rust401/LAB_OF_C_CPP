@@ -22,7 +22,7 @@ struct Dude
     //constructor
     Dude(uint16_t index, std::string &type)
     {
-        this->_index = _index;
+        this->_index = index;
         this->_type = type;
         this->_thetaOne = 0;
         this->_thetaTwo = 0;

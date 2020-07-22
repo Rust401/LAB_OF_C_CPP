@@ -11,6 +11,7 @@
 #include "para.h"
 #include "dude.h"
 #include "indicator.h"
+#include "core.h"
 
 
 /* -------------------------------------------------------------------------------- */
@@ -69,7 +70,7 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth)
         currentDude._thetaOne=thetaOne;
         currentDude._thetaTwo=thetaTwo;
         currentDude._tractionOne=tractionOne;
-        currentDude._tractionTwo+tractionTwo;
+        currentDude._tractionTwo=tractionTwo;
         currentDude._phi=phi;
         currentDude._length=TUBE_LENGTH;
     }
@@ -115,7 +116,7 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth)
         currentDude._thetaOne=thetaOne;
         currentDude._thetaTwo=thetaTwo;
         currentDude._tractionOne=tractionOne;
-        currentDude._tractionTwo+tractionTwo;
+        currentDude._tractionTwo=tractionTwo;
 
         currentDude._phi=phi;
         currentDude._length=CYLINDER_LENGTH;
@@ -147,7 +148,7 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth)
         currentDude._thetaOne=thetaOne;
         currentDude._thetaTwo=thetaTwo;
         currentDude._tractionOne=tractionOne;
-        currentDude._tractionTwo+tractionTwo;
+        currentDude._tractionTwo=tractionTwo;
         currentDude._phi=phi;
         currentDude._length=UNIT_LENGTH;
     }
@@ -261,4 +262,27 @@ std::vector<std::pair<double,double>> getChainShape(std::vector<Dude>& dudes){
 }
 
 /* out put the data to a file */
+void saveTheChainShapeToFile(std::vector<std::pair<double,double> >& points){
+    if(points.size()==0){
+        std::cout<<"No points data, ending the savving process..."<<std::endl;
+        exit(1);
+    }
+
+    FILE* pFile = fopen(CHAIN_SHAPE_FILE,"w");
+    if(pFile==nullptr){
+        std::cout<<"Open file failed."<<std::endl;
+        exit(1);
+    }
+
+    for(int i=0;i<points.size();++i)
+    {
+        fprintf(pFile,"%lf,%lf\n",points[i].first,points[i].second);
+    }
+    fclose(pFile);
+    std::cout<<"File saved to "<<CHAIN_SHAPE_FILE<<std::endl;
+    return;
+
+    
+}
+
 

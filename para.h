@@ -47,6 +47,10 @@
 
 
 
+// config
+#define CHAIN_SHAPE_FILE "./chainShape.txt"
+
+
 
 
 #endif //PARA_H
