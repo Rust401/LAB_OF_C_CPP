@@ -4,6 +4,7 @@
 #include <string>
 #include <math.h>
 #include <cmath>
+#include <string.h>
 #include <utility>
 #include <algorithm>
 #include <vector>
@@ -38,8 +39,8 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth)
         /* put the value back */
         currentDude._index=index;
         currentDude._type="buoy";
-        currentDude._thetaOne=thetaOne;
-        currentDude._tractionOne=tractionOne;
+        currentDude._thetaTwo=thetaOne;
+        currentDude._tractionTwo=tractionOne;
         currentDude._length=depth;
         currentDude._phi=PHI/2;
     }
@@ -47,8 +48,8 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth)
     /* tube */
     if(index>=2&&index<=5){
         /* calculate */
-        double thetaOne=preDude._thetaOne;
-        double tractionOne=preDude._tractionOne;
+        double thetaOne=preDude._thetaTwo;
+        double tractionOne=preDude._tractionTwo;
         double gravity=TUBE_MASS*G;
         double floatage=SEA_WATER_DENSITY*G*PHI*pow(TUBE_RADIUS,2)*TUBE_LENGTH;
         double horizontal=tractionOne*cos(thetaOne);
@@ -79,8 +80,8 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth)
     /* cylinder */
     if(index==5){
         /* calculate */
-        double thetaOne=preDude._thetaOne;
-        double tractionOne=preDude._tractionOne;
+        double thetaOne=preDude._thetaTwo;
+        double tractionOne=preDude._tractionTwo;
 
         // 1) ball
         double gravityBall=HAMMER_MASS*G;
@@ -93,7 +94,7 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth)
         double floatageCylinder=SEA_WATER_DENSITY*G*cylinderVolumn;
 
 
-        double horizontal=tractionOne*cos(thetaOne);;
+        double horizontal=tractionOne*cos(thetaOne);
         double vertical = 
         tractionOne * sin(thetaOne) - 
         (gravityCyinder - floatageCylinder) - 
@@ -113,7 +114,7 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth)
         /* put the value back */
         currentDude._index=index;
         currentDude._type="cylinder";
-        currentDude._thetaOne=thetaOne;
+        currentDude._thetaOne=thetaTwo;
         currentDude._thetaTwo=thetaTwo;
         currentDude._tractionOne=tractionOne;
         currentDude._tractionTwo=tractionTwo;
@@ -125,10 +126,13 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth)
     /* chain */
     if(index>5){
         /* calculate */
-        double thetaOne=preDude._thetaOne;
-        double tractionOne=preDude._tractionOne;
+        double thetaOne=preDude._thetaTwo;
+        double tractionOne=preDude._tractionTwo;
+
         double gravity=UNIT_LENGTH*UNIT_MASS*G;
-        double floatage=0;
+        double volumn=UNIT_MASS/CHAIN_DENSITY;
+        double floatage=SEA_WATER_DENSITY*G*volumn;
+
         double horizontal=tractionOne*cos(thetaOne);
         double vertical = tractionOne * sin(thetaOne) - (gravity - floatage);
         double thetaTwo=atan(vertical/horizontal);/* it's a radian */
@@ -197,11 +201,37 @@ void OneTry(std::vector<Dude>& dudes, double depth)
     
 
     // 5) chain
+    bool reachBottom=false;
     while(count<=TOTAL_COUNT){
         Dude currentChain;
         nextDude(dudes.back(),currentChain,count,depth);
+
+        //check whether the chain get the bottom
+        if(currentChain._thetaTwo<=0){
+            currentChain._thetaOne=0;
+            currentChain._thetaTwo=0;
+            currentChain._tractionOne=0;
+            currentChain._tractionTwo=0;
+            currentChain._phi=0;
+
+            reachBottom=true;
+            break;
+        }
         dudes.push_back(currentChain);
         ++count;
+    }
+
+    // 6) after reach the bottom
+    if(reachBottom==true)
+    {
+        while(count<=TOTAL_COUNT){
+            Dude bottomChain;
+            bottomChain._type="bottomChain";
+            bottomChain._index=count;
+            bottomChain._length=UNIT_LENGTH;
+            dudes.push_back(bottomChain);
+            ++count;
+        }
     }
 }
 
@@ -224,7 +254,7 @@ void oneValidation(std::vector<Dude>& dudes, Indicators& indicators){
     // Distance betweeen buoy and anchor
     double currentLength=0;
     for(int i=2;i<dudes.size();++i){
-        currentLength=dudes[i]._length*cos(dudes[i]._phi);
+        currentLength+=dudes[i]._length*cos(dudes[i]._phi);
     }
     indicators._distance=currentLength;
 
@@ -251,12 +281,17 @@ std::vector<std::pair<double,double>> getChainShape(std::vector<Dude>& dudes){
     std::pair<double,double> firstPoint=std::make_pair(0.0,0.0);
     points.push_back(firstPoint);
 
-    //inser the chains from the last chain
-    while(dudes[i]._type=="chain"){
+    //insert the chains from the last chain
+    while(
+        !strcmp(dudes[i]._type.c_str(),"chain")
+        ||
+        !strcmp(dudes[i]._type.c_str(),"bottomChain")
+    ){
         double deltaX=dudes[i]._length*cos(dudes[i]._phi);
         double deltaY=dudes[i]._length*sin(dudes[i]._phi);
         auto currentPoint=std::make_pair(points.back().first+deltaX,points.back().second+deltaY);
         points.push_back(currentPoint);
+        i-=1;
     }
     
     return points;
