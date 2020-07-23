@@ -26,6 +26,7 @@ struct Indicators
     }
 
     void display();
+    void init();
     bool validate();
 };
 

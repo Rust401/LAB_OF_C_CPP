@@ -6,22 +6,34 @@
 #include "dude.h"
 #include "indicator.h"
 
-void seachTheDepth(double depth,std::vector<Dude>& dudes,Indicators& indicator){
-    OneTry(dudes,depth);
+// give a immersion depth and get the shape of the whole system
+void seachTheDepth(
+    double depth,
+    std::vector<Dude>& dudes,
+    Indicators& indicator,
+    double hammerMass
+){
+    OneTry(dudes,depth,hammerMass);
     oneValidation(dudes,indicator);
 }
 
-void binarySearch(double targetHeight,double bias,double left,double right)
-{
+// give the targetHeight and the bias, get the suitable immersion depth
+void binarySearchImmersionDepth(
+    double targetHeight,
+    double bias,
+    double left,
+    double right,
+    double hammerMass,
+    Indicators& indicator
+){
     double leftHeight=targetHeight*(1-bias);
     double rightHeight=targetHeight*(1+bias);
     
     std::vector<Dude> dudes;
-    Indicators indicator;
 
     while(indicator._height<leftHeight||indicator._height>rightHeight){
         double mid=left+(right-left)/2;
-        seachTheDepth(mid,dudes,indicator);
+        seachTheDepth(mid,dudes,indicator,hammerMass);
         if(indicator._height>=rightHeight){
             right=mid;
         }else if(indicator._height<=leftHeight){
@@ -29,26 +41,62 @@ void binarySearch(double targetHeight,double bias,double left,double right)
         }
     }
 
-    indicator.display();
-
     return ;
+}
+
+// check the status, judge valid or not
+bool isOK(Indicators& indicator){
+    if(
+        ((PHI/2-indicator._phiCylinder*PHI/180)<=MAX_PHI_CYLINDER)
+        &&
+        (indicator._phiLastChain*PHI/180<=MAX_PHI_LASTCHAIN)
+    ){
+        return true;
+    }
+    return false;
+}
+
+// get the minimum mass of the hammer ball
+// calculate the region of the hammer mass first
+double binarySearchHammerMass(
+    double leftMass,
+    double rightMass,
+    double hammerMassBias,
+    Indicators& indicator
+){
+    if((rightMass-leftMass)<=DEFUALT_HAMMER_MASS_BIAS){
+        binarySearchImmersionDepth(18.0f,DEFUALT_BIAS,0.5,1.8,leftMass,indicator);
+        return leftMass;
+    }
+    double midMass;
+    while((rightMass-leftMass)>=hammerMassBias){
+        midMass=leftMass+(rightMass-leftMass)/2;
+
+        indicator.init();
+        binarySearchImmersionDepth(18.0f,DEFUALT_BIAS,0.5,1.8,midMass,indicator);
+        //indicator.display();
+        if(indicator.validate()){
+            rightMass=midMass;
+        }else{
+            leftMass=midMass;
+        }
+    }
+    return midMass;
 }
 
 
 
 int main()
 {
-    /* std::vector<Dude> dudes;
-    //OneTry(dudes,0.7348f);
+    Indicators currentIndicator;
 
-    Indicators indicator; */
-    //seachTheDepth(0.7348f,dudes,indicator);
-    binarySearch(18.0f,0.00005,0.5,1.5);
-    
-    //oneValidation(dudes,indicator);
-    /* indicator.display();
+    double minMass=binarySearchHammerMass(1200,3000,DEFUALT_HAMMER_MASS_BIAS,currentIndicator);
+    std::cout<<"the minimum hammer mass: "<<minMass<<std::endl;
+    currentIndicator.display();
 
-    auto points=getChainShape(dudes);
+    /* Indicators indi;
+    binarySearchImmersionDepth(18.0f,DEFUALT_BIAS,0.5,1.5,2100,indi);
+    indi.display(); */
 
-    saveTheChainShapeToFile(points); */
+    return 0;
 }

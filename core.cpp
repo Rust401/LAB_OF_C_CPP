@@ -18,7 +18,7 @@
 /* -------------------------------------------------------------------------------- */
 /* ---------------------------- PREVIOUS & NEXT ---------------------------- */
 /* -------------------------------------------------------------------------------- */
-void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth)
+void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth,double hammerMass)
 {
     /* the dummy dude, contain no data */
     if (index == 0){
@@ -84,8 +84,9 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth)
         double tractionOne=preDude._tractionTwo;
 
         // 1) ball
-        double gravityBall=HAMMER_MASS*G;
-        double ballVolumn=HAMMER_MASS/HAMMER_DENSITY;
+        // CAUTION HERE!!!! THE HAMMER_MASS IS IMPORTANT!
+        double gravityBall=hammerMass*G;
+        double ballVolumn=hammerMass/HAMMER_DENSITY;
         double floatageBall=ballVolumn*SEA_WATER_DENSITY*G;
 
         // 2) cylinder
@@ -163,7 +164,7 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth)
 /* -------------------------------------------------------------------------------- */
 
 
-void OneTry(std::vector<Dude>& dudes, double depth)
+void OneTry(std::vector<Dude>& dudes, double depth,double hammerMass)
 {
     if(dudes.size()!=0){
         dudes.clear();
@@ -174,28 +175,28 @@ void OneTry(std::vector<Dude>& dudes, double depth)
     // 1) dummy dude
     Dude nullDude;
     Dude dummyDude;
-    nextDude(nullDude,dummyDude,count,depth);
+    nextDude(nullDude,dummyDude,count,depth,hammerMass);
     dudes.push_back(dummyDude);
     ++count;
 
 
     // 2) buoy
     Dude buoyDude;
-    nextDude(dudes.back(),buoyDude,count,depth);
+    nextDude(dudes.back(),buoyDude,count,depth,hammerMass);
     dudes.push_back(buoyDude);
     ++count;
 
     // 3) tube
     while(count<=5){
         Dude currentTube;
-        nextDude(dudes.back(),currentTube,count,depth);
+        nextDude(dudes.back(),currentTube,count,depth,hammerMass);
         dudes.push_back(currentTube);
         ++count;
     }
 
     // 4) cylinder
     Dude cylinderDude;
-    nextDude(dudes.back(),cylinderDude,count,depth);
+    nextDude(dudes.back(),cylinderDude,count,depth,hammerMass);
     dudes.push_back(cylinderDude);
     ++count;
     
@@ -204,7 +205,7 @@ void OneTry(std::vector<Dude>& dudes, double depth)
     bool reachBottom=false;
     while(count<=TOTAL_COUNT+6){
         Dude currentChain;
-        nextDude(dudes.back(),currentChain,count,depth);
+        nextDude(dudes.back(),currentChain,count,depth,hammerMass);
 
         //check whether the chain get the bottom
         if(currentChain._thetaTwo<=0){
