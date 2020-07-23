@@ -78,7 +78,7 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth)
 
 
     /* cylinder */
-    if(index==5){
+    if(index==6){
         /* calculate */
         double thetaOne=preDude._thetaTwo;
         double tractionOne=preDude._tractionTwo;
@@ -114,7 +114,7 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth)
         /* put the value back */
         currentDude._index=index;
         currentDude._type="cylinder";
-        currentDude._thetaOne=thetaTwo;
+        currentDude._thetaOne=thetaOne;
         currentDude._thetaTwo=thetaTwo;
         currentDude._tractionOne=tractionOne;
         currentDude._tractionTwo=tractionTwo;
@@ -124,7 +124,7 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth)
     }
 
     /* chain */
-    if(index>5){
+    if(index>6){
         /* calculate */
         double thetaOne=preDude._thetaTwo;
         double tractionOne=preDude._tractionTwo;
@@ -202,7 +202,7 @@ void OneTry(std::vector<Dude>& dudes, double depth)
 
     // 5) chain
     bool reachBottom=false;
-    while(count<=TOTAL_COUNT){
+    while(count<=TOTAL_COUNT+6){
         Dude currentChain;
         nextDude(dudes.back(),currentChain,count,depth);
 
@@ -224,7 +224,7 @@ void OneTry(std::vector<Dude>& dudes, double depth)
     // 6) after reach the bottom
     if(reachBottom==true)
     {
-        while(count<=TOTAL_COUNT){
+        while(count<=TOTAL_COUNT+6){
             Dude bottomChain;
             bottomChain._type="bottomChain";
             bottomChain._index=count;

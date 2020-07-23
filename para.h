@@ -27,7 +27,7 @@
 #define TOTAL_LENGTH 22.05 /* m */
 #define UNIT_LENGTH 0.105 /* m */
 #define UNIT_MASS 7 /* kg/m */
-#define CHAIN_DENSITY 9800 /* kg/m3 */
+#define CHAIN_DENSITY 7800 /* kg/m3 */
 #define TOTAL_COUNT (22.05/0.105)
 
 // iron ball (hammer)
