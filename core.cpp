@@ -14,6 +14,26 @@
 #include "indicator.h"
 #include "core.h"
 
+#ifdef SEA_FORCE
+double binarySearchGetPHI(double c,double a, double b,double thetaOne, double tractionOne)
+{
+    double left=0;
+    double right=PHI/2;
+    while(1){
+        double mid=left+(right-left)/2;
+        double currentResult=tan(mid)-c/(a+b*sin(mid));
+        if(currentResult>PHI_BIAS){
+            right=mid;
+        }else if(currentResult<-PHI_BIAS){
+            left=mid;
+        }else{
+            return mid;
+        }
+    }
+}
+
+
+#endif
 
 /* -------------------------------------------------------------------------------- */
 /* ---------------------------- PREVIOUS & NEXT ---------------------------- */
@@ -28,25 +48,59 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth,doub
 
     /* buoy */
     if (index == 1){
+#ifdef SEA_FORCE
+        /* calculate */
+        double seaForce=374*BUOY_R*2*depth*pow(WATER_SPEED,2);
+        double windForce = 0.625 * (BUOY_HEIGHT - depth) * 2 * BUOY_R * pow(WIND_SPEED, 2);
+        double floatage = SEA_WATER_DENSITY * G * depth * PHI * pow(BUOY_R, 2);
+        double gravity = BUOY_MASS * G;
+        double horizontal=seaForce+windForce;
+        double vertical=floatage-gravity;
+        double thetaOne = atan((vertical /horizontal));/* it's a radian */
+        double tractionOne = horizontal / cos(thetaOne);
+#elif
         /* calculate */
         double windForce = 0.625 * (BUOY_HEIGHT - depth) * 2 * BUOY_R * pow(WIND_SPEED, 2);
         double floatage = SEA_WATER_DENSITY * G * depth * PHI * pow(BUOY_R, 2);
         double gravity = BUOY_MASS * G;
         double thetaOne = atan((floatage - gravity) / windForce); /* it's a radian */
-        double tractionOne = windForce / cos(thetaOne);
-
-
-        /* put the value back */
+        double tractionOne = windForce / cos(thetaOne);        
+#endif
+    /* put the value back */
         currentDude._index=index;
         currentDude._type="buoy";
         currentDude._thetaTwo=thetaOne;
         currentDude._tractionTwo=tractionOne;
         currentDude._length=depth;
-        currentDude._phi=PHI/2;
+        currentDude._phi=PHI/2;   
     }
 
     /* tube */
     if(index>=2&&index<=5){
+#ifdef SEA_FORCE
+        /* calculate */
+        double thetaOne=preDude._thetaTwo;
+        double tractionOne=preDude._tractionTwo;
+        double gravity=TUBE_MASS*G;
+        double floatage=SEA_WATER_DENSITY*G*PHI*pow(TUBE_RADIUS,2)*TUBE_LENGTH;
+
+        /* warning! trick part */
+        /*
+            tan(phi)=c/(a+b*sin(phi))
+            here:
+                c=2*TractionOne*sin(thetaOne)-(gravity-floatage);
+                a=2*TractionOne*cos(thetaOne);
+                b=374*TUBE_RADIUS*2*TUBE_LENGTH*pow(WATER_SPEED,2);
+        */
+       double c=2*tractionOne*sin(thetaOne)-(gravity-floatage);
+       double a=2*tractionOne*cos(thetaOne);
+       double b=374*TUBE_RADIUS*2*TUBE_LENGTH*pow(WATER_SPEED,2);
+       double phi=binarySearchGetPHI(c,a,b,thetaOne,tractionOne);
+
+
+
+        
+#elif
         /* calculate */
         double thetaOne=preDude._thetaTwo;
         double tractionOne=preDude._tractionTwo;
@@ -63,6 +117,7 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth,doub
                 2*tractionOne*cos(thetaOne)
             )
         );
+#endif
         
 
         /* put the value back */

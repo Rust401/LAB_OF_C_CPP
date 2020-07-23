@@ -99,11 +99,11 @@ double binarySearchHammerMass(
 
 int main()
 {
-    /* Indicators currentIndicator;
 
+    Indicators currentIndicator;
     double minMass=binarySearchHammerMass(1200,3000,DEFUALT_HAMMER_MASS_BIAS,currentIndicator);
     std::cout<<"the minimum hammer mass: "<<minMass<<std::endl;
-    currentIndicator.display(); */
+    currentIndicator.display();
 
     Indicators indi;
     binarySearchImmersionDepth(18.0f,DEFUALT_BIAS,0.5,1.5,1200,indi); //dudes is here

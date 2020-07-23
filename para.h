@@ -54,6 +54,10 @@
 // config
 #define CHAIN_SHAPE_FILE "./chainShape.txt"
 
+// mode
+#define SEA_FORCE
+
+
 
 
 #endif //PARA_H
