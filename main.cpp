@@ -31,6 +31,8 @@ void binarySearchImmersionDepth(
     
     std::vector<Dude> dudes;
 
+
+    // 1) binary search
     while(indicator._height<leftHeight||indicator._height>rightHeight){
         double mid=left+(right-left)/2;
         seachTheDepth(mid,dudes,indicator,hammerMass);
@@ -40,6 +42,15 @@ void binarySearchImmersionDepth(
             left=mid;
         }
     }
+
+    // 2) output the status of the tube
+    /* for(int i=2;i<=5;++i){
+        dudes[i].display();
+    } */
+
+    // 3) save the shape of the chain
+    /* auto points=getChainShape(dudes);
+    saveTheChainShapeToFile(points); */
 
     return ;
 }
@@ -88,15 +99,15 @@ double binarySearchHammerMass(
 
 int main()
 {
-    Indicators currentIndicator;
+    /* Indicators currentIndicator;
 
     double minMass=binarySearchHammerMass(1200,3000,DEFUALT_HAMMER_MASS_BIAS,currentIndicator);
     std::cout<<"the minimum hammer mass: "<<minMass<<std::endl;
-    currentIndicator.display();
+    currentIndicator.display(); */
 
-    /* Indicators indi;
-    binarySearchImmersionDepth(18.0f,DEFUALT_BIAS,0.5,1.5,2100,indi);
-    indi.display(); */
+    Indicators indi;
+    binarySearchImmersionDepth(18.0f,DEFUALT_BIAS,0.5,1.5,1200,indi); //dudes is here
+    indi.display();
 
     return 0;
 }

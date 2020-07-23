@@ -36,7 +36,7 @@
 
 
 // nature
-#define WIND_SPEED 36 /* m */
+#define WIND_SPEED 24 /* m */
 #define WATER_SPEED 1.5 /* m */
 #define SEA_DEPTH 18 /* m */
 #define SEA_WATER_DENSITY 1025 /* kg/m3 */
