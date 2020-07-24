@@ -15,11 +15,12 @@
 #include "core.h"
 
 #ifdef SEA_FORCE
+/* get the phi of the dude*/
 double binarySearchGetPHI(double c,double a, double b,double thetaOne, double tractionOne)
 {
     double left=0;
     double right=PHI/2;
-    while(1){
+    while(right-left>2*PHI_BIAS){
         double mid=left+(right-left)/2;
         double currentResult=tan(mid)-c/(a+b*sin(mid));
         if(currentResult>PHI_BIAS){
@@ -31,8 +32,6 @@ double binarySearchGetPHI(double c,double a, double b,double thetaOne, double tr
         }
     }
 }
-
-
 #endif
 
 /* -------------------------------------------------------------------------------- */
@@ -84,7 +83,7 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth,doub
         double gravity=TUBE_MASS*G;
         double floatage=SEA_WATER_DENSITY*G*PHI*pow(TUBE_RADIUS,2)*TUBE_LENGTH;
 
-        /* warning! trick part */
+        /* warning! trick part Get phi*/
         /*
             tan(phi)=c/(a+b*sin(phi))
             here:
@@ -97,8 +96,12 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth,doub
        double b=374*TUBE_RADIUS*2*TUBE_LENGTH*pow(WATER_SPEED,2);
        double phi=binarySearchGetPHI(c,a,b,thetaOne,tractionOne);
 
-
-
+       /* now we get the phi */
+       double waterForceTube=374*2*TUBE_RADIUS*TUBE_LENGTH*sin(phi)*pow(WATER_SPEED,2);
+       double horizontal=tractionOne*cos(thetaOne)+waterForceTube;
+       double vertical=tractionOne*sin(thetaOne)-(gravity-floatage);
+       double thetaTwo=atan(vertical/horizontal);
+       double tractionTwo=horizontal/cos(thetaTwo);
         
 #elif
         /* calculate */
@@ -118,7 +121,6 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth,doub
             )
         );
 #endif
-        
 
         /* put the value back */
         currentDude._index=index;
@@ -134,6 +136,54 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth,doub
 
     /* cylinder */
     if(index==6){
+
+#ifdef SEA_FORCE
+    /* calculate */
+    // 1) traction from the preDude
+        double thetaOne=preDude._thetaTwo;
+        double tractionOne=preDude._tractionTwo;
+    // 2) ball
+        double gravityBall=hammerMass*G;
+        double ballVolumn=hammerMass/HAMMER_DENSITY;
+        double floatageBall=ballVolumn*SEA_WATER_DENSITY*G;
+        double ballHorizontal=374*
+                              PHI*
+                              pow(3*ballVolumn/(4*PHI),2/3)*
+                              pow(WATER_SPEED,2);
+        double ballVertical=gravityBall-floatageBall;
+
+    // 3) cylinder
+        double gravityCyinder=CYLINDER_MASS*G;
+        double cylinderVolumn=pow(CYLINDER_RADIUS,2)*PHI*CYLINDER_LENGTH;
+        double floatageCylinder=SEA_WATER_DENSITY*G*cylinderVolumn;
+
+        /* warning! trick part Get phi*/
+        /*
+            tan(phi)=c/(a+b*sin(phi))
+            here:
+                c=2*TractionOne*sin(thetaOne)-
+                                   (gravityCylinder-floatageCylinder)-
+                                   ballVertical;
+                a=2*TractionOne*cos(thetaOne)+ballHorizontal
+                b=374*CYLINDER_RAIUS*2*CYLINDER_LENGTH*pow(WATER_SPEED,2);
+        */
+        double c=2*tractionOne*sin(thetaOne)-
+                 (gravityCyinder-floatageCylinder)-
+                 ballVertical;
+        double a=2*tractionOne*cos(thetaOne)+ballHorizontal;
+        double b=374*CYLINDER_RADIUS*2*CYLINDER_LENGTH*pow(WATER_SPEED,2);
+        double phi=binarySearchGetPHI(c,a,b,thetaOne,tractionOne);
+        double waterForceCylinder=b*sin(phi);
+
+        double vertical=thetaOne*sin(tractionOne)-
+                        (gravityCyinder-floatageCylinder)-
+                        ballVertical;
+
+        double horizontal=thetaOne*cos(thetaOne)+waterForceCylinder+ballHorizontal;
+        double thetaTwo=atan(vertical/horizontal);
+        double tractionTwo=vertical/sin(thetaTwo);
+                          
+#elif
         /* calculate */
         double thetaOne=preDude._thetaTwo;
         double tractionOne=preDude._tractionTwo;
@@ -166,6 +216,9 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth,doub
                 2*tractionOne*cos(thetaOne)
             )
         );
+
+#endif
+        
 
         /* put the value back */
         currentDude._index=index;
