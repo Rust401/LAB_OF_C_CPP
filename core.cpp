@@ -78,11 +78,15 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth,doub
     if(index>=2&&index<=5){
 #ifdef SEA_FORCE
         /* calculate */
+        // 1) traction from the preDude
         double thetaOne=preDude._thetaTwo;
         double tractionOne=preDude._tractionTwo;
+
+        // 2) tube itself
         double gravity=TUBE_MASS*G;
         double floatage=SEA_WATER_DENSITY*G*PHI*pow(TUBE_RADIUS,2)*TUBE_LENGTH;
 
+        // 3) get the phi of the tube
         /* warning! trick part Get phi*/
         /*
             tan(phi)=c/(a+b*sin(phi))
@@ -96,7 +100,7 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth,doub
        double b=374*TUBE_RADIUS*2*TUBE_LENGTH*pow(WATER_SPEED,2);
        double phi=binarySearchGetPHI(c,a,b,thetaOne,tractionOne);
 
-       /* now we get the phi */
+       // 4) calculate the traction with nextDude
        double waterForceTube=374*2*TUBE_RADIUS*TUBE_LENGTH*sin(phi)*pow(WATER_SPEED,2);
        double horizontal=tractionOne*cos(thetaOne)+waterForceTube;
        double vertical=tractionOne*sin(thetaOne)-(gravity-floatage);
@@ -234,6 +238,42 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth,doub
 
     /* chain */
     if(index>6){
+
+#ifdef SEA_FORCE
+        /* calculate */
+        // 1) traction from the preDude
+        double thetaOne=preDude._thetaTwo;
+        double tractionOne=preDude._tractionTwo;
+
+        // 2) chain itself
+        double gravity=UNIT_MASS*UNIT_LENGTH*G;
+        double volumn=UNIT_MASS/CHAIN_DENSITY;
+        double floatage=SEA_WATER_DENSITY*G*volumn;
+
+        // 3) get the phi of the chain
+        /* warning! trick part Get phi*/
+        /*
+            tan(phi)=c/(a+b*sin(phi))
+            here:
+                c=2*TractionOne*sin(thetaOne)-(gravity-floatage);
+                a=2*TractionOne*cos(thetaOne);
+                b=374*2*pow(volumn/(PHI*UNIT_LENGTH),0.5)*UNIT_LENGTH*pow(WATER_SPEED,2);
+        */
+        double c=2*tractionOne*sin(thetaOne)-(gravity-floatage);
+        double a=2*tractionOne*cos(thetaOne);
+        /* b is the coefficient of the waterforce with out the sin(phi)*/
+        double b=374*2*pow(volumn/(PHI*UNIT_LENGTH),0.5)*
+                    UNIT_LENGTH*pow(WATER_SPEED,2);
+        double phi=binarySearchGetPHI(c,a,b,thetaOne,tractionOne);
+    
+        // 4) calculate the traction with nextDude
+        double waterForceChain=b*sin(phi);
+        double horizontal=tractionOne*cos(thetaOne)+waterForceChain;
+        double vertical=tractionOne*sin(thetaOne)-(gravity-floatage);
+        double thetaTwo=atan(vertical/horizontal);
+        double tractionTwo=horizontal/cos(thetaTwo);
+
+#elif
         /* calculate */
         double thetaOne=preDude._thetaTwo;
         double tractionOne=preDude._tractionTwo;
@@ -253,7 +293,7 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth,doub
                 2*tractionOne*cos(thetaOne)
             )
         );
-        
+#endif
 
         /* put the value back */
         currentDude._index=index;
