@@ -31,6 +31,7 @@ double binarySearchGetPHI(double c,double a, double b,double thetaOne, double tr
             return mid;
         }
     }
+    return left+(right-left)/2;
 }
 #endif
 
@@ -57,7 +58,7 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth,doub
         double vertical=floatage-gravity;
         double thetaOne = atan((vertical /horizontal));/* it's a radian */
         double tractionOne = horizontal / cos(thetaOne);
-#elif
+#else
         /* calculate */
         double windForce = 0.625 * (BUOY_HEIGHT - depth) * 2 * BUOY_R * pow(WIND_SPEED, 2);
         double floatage = SEA_WATER_DENSITY * G * depth * PHI * pow(BUOY_R, 2);
@@ -71,7 +72,7 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth,doub
         currentDude._thetaTwo=thetaOne;
         currentDude._tractionTwo=tractionOne;
         currentDude._length=depth;
-        currentDude._phi=PHI/2;   
+        currentDude._phi=PHI/2;
     }
 
     /* tube */
@@ -107,7 +108,7 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth,doub
        double thetaTwo=atan(vertical/horizontal);
        double tractionTwo=horizontal/cos(thetaTwo);
         
-#elif
+#else
         /* calculate */
         double thetaOne=preDude._thetaTwo;
         double tractionOne=preDude._tractionTwo;
@@ -179,15 +180,16 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth,doub
         double phi=binarySearchGetPHI(c,a,b,thetaOne,tractionOne);
         double waterForceCylinder=b*sin(phi);
 
-        double vertical=thetaOne*sin(tractionOne)-
+        double vertical=tractionOne*sin(thetaOne)-
                         (gravityCyinder-floatageCylinder)-
                         ballVertical;
 
-        double horizontal=thetaOne*cos(thetaOne)+waterForceCylinder+ballHorizontal;
+
+        double horizontal=tractionOne*cos(thetaOne)+waterForceCylinder+ballHorizontal;
         double thetaTwo=atan(vertical/horizontal);
         double tractionTwo=vertical/sin(thetaTwo);
                           
-#elif
+#else
         /* calculate */
         double thetaOne=preDude._thetaTwo;
         double tractionOne=preDude._tractionTwo;
@@ -273,7 +275,7 @@ void nextDude(Dude& preDude,Dude& currentDude, uint32_t index, double depth,doub
         double thetaTwo=atan(vertical/horizontal);
         double tractionTwo=horizontal/cos(thetaTwo);
 
-#elif
+#else
         /* calculate */
         double thetaOne=preDude._thetaTwo;
         double tractionOne=preDude._tractionTwo;

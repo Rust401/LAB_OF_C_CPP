@@ -100,14 +100,26 @@ double binarySearchHammerMass(
 int main()
 {
 
-    Indicators currentIndicator;
-    double minMass=binarySearchHammerMass(1200,3000,DEFUALT_HAMMER_MASS_BIAS,currentIndicator);
+    /* Indicators currentIndicator;
+    double minMass=binarySearchHammerMass(1200,6000,DEFUALT_HAMMER_MASS_BIAS,currentIndicator);
     std::cout<<"the minimum hammer mass: "<<minMass<<std::endl;
-    currentIndicator.display();
+    currentIndicator.display(); */
 
     Indicators indi;
-    binarySearchImmersionDepth(18.0f,DEFUALT_BIAS,0.5,1.5,1200,indi); //dudes is here
+    binarySearchImmersionDepth(SEA_DEPTH,DEFUALT_BIAS,0.2f,10.0,3000,indi); //dudes is here
     indi.display();
+
+
+    /* //unit test
+    std::vector<Dude> dudes;
+    Indicators indi;
+    OneTry(dudes,0.7,1200);
+    for(int i=0;i<dudes.size();++i){
+        dudes[i].display();
+    }
+    oneValidation(dudes,indi);
+    indi.display(); */
+
 
     return 0;
 }

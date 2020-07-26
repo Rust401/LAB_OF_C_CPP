@@ -25,18 +25,19 @@
 
 // chain
 #define TOTAL_LENGTH 22.05 /* m */
-#define UNIT_LENGTH 0.105 /* m */
-#define UNIT_MASS 7 /* kg/m */
+#define UNIT_LENGTH 0.50 /* m */
+#define UNIT_MASS 19.5 /* kg/m */
 #define CHAIN_DENSITY 7800 /* kg/m3 */
-#define TOTAL_COUNT (22.05/0.105)
+#define TOTAL_COUNT (TOTAL_LENGTH/UNIT_LENGTH)
 
 // iron ball (hammer)
-#define HAMMER_MASS 1200 /* kg */
+#define HAMMER_MASS 1200
+ /* kg */
 #define HAMMER_DENSITY 7800 /* kg/m3 */
 
 
 // nature
-#define WIND_SPEED 24 /* m */
+#define WIND_SPEED 36 /* m */
 #define WATER_SPEED 1.5 /* m */
 #define SEA_DEPTH 18 /* m */
 #define SEA_WATER_DENSITY 1025 /* kg/m3 */
@@ -50,14 +51,13 @@
 // precise level
 #define DEFUALT_BIAS 0.0005 /* 0-1 */
 #define DEFUALT_HAMMER_MASS_BIAS 5 /* kg */
+#define PHI_BIAS 0.001
 
 // config
 #define CHAIN_SHAPE_FILE "./chainShape.txt"
 
 // mode
 #define SEA_FORCE
-
-
 
 
 #endif //PARA_H
